@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29123.88
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RayTwol", "RayTwol\RayTwol.csproj", "{E9C0E5C7-93B9-4D5E-BE9C-254D03252F49}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RayTwolCore", "RayTwolCore\RayTwolCore.csproj", "{81A6B9D0-8447-451B-9F30-8FF731E64B12}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,8 +17,15 @@ Global
 		{E9C0E5C7-93B9-4D5E-BE9C-254D03252F49}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E9C0E5C7-93B9-4D5E-BE9C-254D03252F49}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E9C0E5C7-93B9-4D5E-BE9C-254D03252F49}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81A6B9D0-8447-451B-9F30-8FF731E64B12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81A6B9D0-8447-451B-9F30-8FF731E64B12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81A6B9D0-8447-451B-9F30-8FF731E64B12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81A6B9D0-8447-451B-9F30-8FF731E64B12}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {25F46020-CA5E-4642-9119-14DC7E0F3BF9}
 	EndGlobalSection
 EndGlobal

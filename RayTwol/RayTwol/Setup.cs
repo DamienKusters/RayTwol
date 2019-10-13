@@ -16,6 +16,9 @@ namespace RayTwol
 
         public static bool firstTime;
 
+        /// <summary>
+        /// Check certain files integrity
+        /// </summary>
         public static void SetupChecks()
         {
             // Check for LEVELS0.DAT

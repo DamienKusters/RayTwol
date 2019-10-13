@@ -10,6 +10,7 @@ namespace RayTwol
         [STAThread]
         public static void Main(string[] args)
         {
+            RayTwolCore.Launcher.Init();
             Editor.Init();
         }
     }

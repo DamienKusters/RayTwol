@@ -588,28 +588,30 @@ namespace RayTwol
         
         public static DirectoryInfo[] levelDirs;
 
+        //LOGIC
         public static void Init()
         {
+            #region Setup
             bool validSetup = false;
 
             while (!validSetup)
             {
                 if (File.Exists("RayTwol.ini"))
                 {
-                    var configRead = new StreamReader("RayTwol.ini");
-                    char[] cfSplit = { '\t' };
+                    var cfReader = new StreamReader("RayTwol.ini");
+                    char cfSplitChar = '\t';
 
-                    while (!configRead.EndOfStream)
+                    while (!cfReader.EndOfStream)
                     {
-                        string line = configRead.ReadLine();
-                        switch (line.Split(cfSplit)[0])
+                        string line = cfReader.ReadLine();
+                        switch (line.Split(cfSplitChar)[0])
                         {
                             case "dir:":
-                                cf_gameDir = line.Split(cfSplit)[2];
+                                cf_gameDir = line.Split(cfSplitChar)[2];
                                 break;
                         }
                     }
-                    configRead.Close();
+                    cfReader.Close();
                 }
 
                 if (cf_gameDir == null)
@@ -629,7 +631,10 @@ namespace RayTwol
 
 
             Setup.SetupChecks();
+            #endregion
         }
+
+        //UI
         public static void InvalidDir()
         {
             Warning warning = new Warning("Select directory", "A valid Rayman 2 install directory has not been selected. Press OK to browse.");
@@ -645,6 +650,8 @@ namespace RayTwol
                 SaveConfig();
             }
         }
+
+        //LOGIC
         public static void SaveConfig()
         {
             StreamWriter configWrite = new StreamWriter("RayTwol.ini");
@@ -654,6 +661,7 @@ namespace RayTwol
             configWrite.Close();
         }
         
+        //LOGIC
         public static void OpenLevel(FileInfo level, string suffix = "")
         {
             Cursor.Current = Cursors.WaitCursor;
@@ -676,6 +684,7 @@ namespace RayTwol
 
             Cursor.Current = Cursors.Default;
         }
+        //LOGIC
         public static void SaveLevel(string suffix = "")
         {
             Cursor.Current = Cursors.WaitCursor;
