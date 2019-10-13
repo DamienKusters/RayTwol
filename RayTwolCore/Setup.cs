@@ -12,51 +12,64 @@ namespace RayTwolCore
         private const string CONFIG_FILE = "RayTwol.ini";
         private const char CONFIG_FILE_SPLIT_CHAR = '\t';
 
-        public void A()
+        private string GetConfigFileValue(string key)
         {
-            throw new NotImplementedException();
-            /*
-            //This region is responsible for getting the file path of Rayman 2
-            bool validSetup = false;
-
-            while (!validSetup)
+            if (File.Exists(CONFIG_FILE))
             {
-                if (File.Exists(CONFIG_FILE))
+                using (StreamReader cfReader = new StreamReader(CONFIG_FILE))
                 {
-                    using (StreamReader cfReader = new StreamReader(CONFIG_FILE))
+                    while (!cfReader.EndOfStream)
                     {
-                        while (!cfReader.EndOfStream)
-                        {
-                            string line = cfReader.ReadLine();
-                            switch (line.Split(CONFIG_FILE_SPLIT_CHAR)[0])
-                            {
-                                case "dir:":
-                                    cf_gameDir = line.Split(CONFIG_FILE_SPLIT_CHAR)[2];
-                                    break;
-                            }
-                        }
-                    }
-                }
+                        string line = cfReader.ReadLine();
 
-                if (cf_gameDir == null)
-                    InvalidDir();//Shows UI error, asks the user for the new path, and tries again.
-                else
-                {
-                    //Final check if the level folder actually exist (Doesn't check for integrity)
-                    if (Directory.Exists(cf_gameDir + "\\Data\\World\\Levels"))
-                        validSetup = true;
-                    else//If not, ask again.
-                        InvalidDir();
+                        if(line.Split(CONFIG_FILE_SPLIT_CHAR)[0] == $"{key}:")
+                            return line.Split(CONFIG_FILE_SPLIT_CHAR)[2];//offset: 2 | CONFIG_FILE_SPLIT_CHAR appears twice in the line.
+                    }
+
+                    return null;//Returns null if nothing is found.
                 }
             }
+            else
+                throw new FileNotFoundException($"Configuration file: '{CONFIG_FILE}' not found.");
+        }
 
-            //Get all folders (level folders) in the Levels directory and check if from that level the .sna is included (possibly geomitry data)
-            foreach (DirectoryInfo levelDir in new DirectoryInfo(cf_gameDir + "\\Data\\World\\Levels").GetDirectories("*", SearchOption.AllDirectories))
+        /// <summary>
+        /// Checks the game file integrity of the directory.
+        /// </summary>
+        /// <param name="gameDirectory"></param>
+        /// <returns></returns>
+        public bool ValidateGameDirectory(string gameDirectory)
+        {
+            if (String.IsNullOrEmpty(gameDirectory))
+                return false;
+            else
+                return Directory.Exists(gameDirectory + @"\Data\World\Levels");
+        }
+
+        private List<FileInfo> ReadGameDirectoryLevelFiles(string levelsDirectory)
+        {
+            List<FileInfo> output = new List<FileInfo>();
+
+            foreach (DirectoryInfo levelDir in new DirectoryInfo(levelsDirectory).GetDirectories("*", SearchOption.AllDirectories))
+            {
                 if (File.Exists(levelDir.FullName + "\\" + levelDir.Name + ".sna"))
-                    levelFiles.Add(new FileInfo(levelDir.FullName + "\\" + levelDir.Name + ".sna"));
+                    output.Add(new FileInfo(levelDir.FullName + "\\" + levelDir.Name + ".sna"));
+            }
 
+            return null;
+        }
 
-            Setup.SetupChecks();*/
+        public string GetGameDirectory()
+        {
+            try
+            {
+                return GetConfigFileValue("dir");
+            }
+            catch (FileNotFoundException ex)
+            {
+                //TODO: Notify user / Or start setup
+                throw;
+            }
         }
     }
 }
