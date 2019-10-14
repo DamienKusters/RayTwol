@@ -16,15 +16,15 @@ namespace RayTwolCore
             //Setup class checks for file integrity
 
             string gameDirectory = setup.GetGameDirectory();
+            bool successfulSetup = false;
 
-            if(setup.ValidateGameDirectory(gameDirectory))
+            do
             {
+                ValidationError error = setup.ValidateGameDirectory(gameDirectory);
+
                 //TODO: Read game directory files
 
-                /*
-                Setup.SetupChecks();
-                */
-            }
+            } while (!successfulSetup);//Reloop if setup isn't completed
 
             return true;
         }
