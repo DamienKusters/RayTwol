@@ -23,33 +23,9 @@ namespace RayTwolCore
 
     public class Setup
     {
-        private const string CONFIG_FILE = "RayTwol.ini";
-        private const char CONFIG_FILE_SPLIT_CHAR = '\t';
-
         public const long INST_FOLDER_SIZE = 38341965;
         public const long INST_TEXTURES_FOLDER_SIZE = 19150935;
         public const long INST_LEVELS0_SIZE = 150775808;
-
-        private string GetConfigFileValue(string key)
-        {
-            if (File.Exists(CONFIG_FILE))
-            {
-                using (StreamReader cfReader = new StreamReader(CONFIG_FILE))
-                {
-                    while (!cfReader.EndOfStream)
-                    {
-                        string line = cfReader.ReadLine();
-
-                        if(line.Split(CONFIG_FILE_SPLIT_CHAR)[0] == $"{key}:")
-                            return line.Split(CONFIG_FILE_SPLIT_CHAR)[2];//offset: 2 | CONFIG_FILE_SPLIT_CHAR appears twice in the line.
-                    }
-
-                    return null;//Returns null if nothing is found.
-                }
-            }
-            else
-                throw new FileNotFoundException($"Configuration file: '{CONFIG_FILE}' not found.");
-        }
 
         /// <summary>
         /// Checks the game file integrity of the directory.
@@ -103,9 +79,11 @@ namespace RayTwolCore
 
         public string GetGameDirectory()
         {
+            ConfigurationManager config = new ConfigurationManager();
+
             try
             {
-                return GetConfigFileValue("dir");
+                return config.GetConfigFileValue("dir");
             }
             catch (FileNotFoundException ex)
             {
