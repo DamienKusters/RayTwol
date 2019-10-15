@@ -8,9 +8,9 @@ namespace RayTwolCore
 {
     public class Launcher
     {
-        private Action<string, string> DisplayMessage;
+        private Func<string, string, bool> DisplayMessage;
 
-        public Launcher(Action<string, string> displayMessageAction)
+        public Launcher(Func<string, string, bool> displayMessageAction)
         {
             DisplayMessage = displayMessageAction;
         }
@@ -57,7 +57,7 @@ namespace RayTwolCore
         private void ShowMessage(string title, string message)
         {
             //TODO: Call message pop-up delegate injected through the Init method
-            DisplayMessage(title, message);//TODO change to predicate, as it returns a bool
+            bool test = DisplayMessage(title, message);
             /*
             var warn = new Warning("LEVELS0.DAT not found", "This is a retail install of Rayman 2 and requires LEVELS0.DAT, a 150 MB file included in the GOG version. Press OK to download and install the file.").ShowDialog();
             if (warn.Value)

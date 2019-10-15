@@ -11,27 +11,19 @@ namespace RayTwol
         public static void Main(string[] args)
         {
             /*
-            Action<string, string> displayMessage = DisplayMessage;
+            Func<string, string, bool> displayMessage = DisplayMessage;//Func to run if the launcher needs User input to proceed.
 
             RayTwolCore.Launcher launcher = new RayTwolCore.Launcher(displayMessage);
 
-            launcher.Init();
+            if (launcher.Init())
+                new MainWindow().ShowDialog();
+            else
+                DisplayMessage("Error", "An unknown error occured.");
             */
+
             Editor.Init();
         }
 
-        private static void DisplayMessage(string title, string message)
-        {
-            var warning = new Warning(title, message).ShowDialog();
-            if (warning.Value)
-            {
-                var dl = new Downloader();
-                dl.ShowDialog();
-                if ((bool)!dl.DialogResult)
-                    Environment.Exit(0);
-            }
-            else
-                Environment.Exit(0);
-        }
+        private static bool DisplayMessage(string title, string message) => new Warning(title, message).ShowDialog().Value;
     }
 }
