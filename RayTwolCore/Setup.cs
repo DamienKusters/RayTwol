@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace RayTwolCore
 {
-    public enum ValidationError
+    public enum ValidationStatus
     {
         LevelsFolderMissing,
 
@@ -25,6 +25,10 @@ namespace RayTwolCore
     {
         private const string CONFIG_FILE = "RayTwol.ini";
         private const char CONFIG_FILE_SPLIT_CHAR = '\t';
+
+        public const long INST_FOLDER_SIZE = 38341965;
+        public const long INST_TEXTURES_FOLDER_SIZE = 19150935;
+        public const long INST_LEVELS0_SIZE = 150775808;
 
         private string GetConfigFileValue(string key)
         {
@@ -52,68 +56,36 @@ namespace RayTwolCore
         /// </summary>
         /// <param name="gameDirectory"></param>
         /// <returns>enum ValidationError</returns>
-        public ValidationError ValidateGameDirectory(string gameDirectory)
+        public ValidationStatus ValidateGameDirectory(string gameDirectory)
         {
             if (!Directory.Exists(gameDirectory + @"\Data\World\Levels"))
-                return ValidationError.LevelsFolderMissing;
+                return ValidationStatus.LevelsFolderMissing;
 
             return ValidateFileIntegrity(gameDirectory);
         }
 
-        private ValidationError ValidateFileIntegrity(string levelsDirectory)
+        private ValidationStatus ValidateFileIntegrity(string levelsDirectory)//TODO: Merge with ValidateGameDirectory
         {
-            throw new NotImplementedException();
-            /*
             string levels0File = levelsDirectory + "\\LEVELS0.DAT";
             string raytwolFolder = levelsDirectory + "\\_raytwol";
 
             // Check for LEVELS0.DAT
             if (!File.Exists(levels0File))
-            {
-                var warn = new Warning("LEVELS0.DAT not found", "This is a retail install of Rayman 2 and requires LEVELS0.DAT, a 150 MB file included in the GOG version. Press OK to download and install the file.").ShowDialog();
-                if (warn.Value)
-                {
-                    var dl = new Downloader();
-                    dl.ShowDialog();
-                    if ((bool)!dl.DialogResult)
-                        Environment.Exit(0);
-                }
-                else
-                    Environment.Exit(0);
-            }
+                return ValidationStatus.LevelsDataFileMissing;
             else if (new FileInfo(levels0File).Length != INST_LEVELS0_SIZE)
-            {
-                var warn = new Warning("LEVELS0.DAT corrupted", "LEVELS0.DAT appears to be corrupted. Press OK to re-download.").ShowDialog();
-                if (warn.Value)
-                {
-                    File.Delete(Editor.cf_gameDir + "\\LEVELS0.DAT");
-                    var dl = new Downloader();
-                    dl.ShowDialog();
-                    if ((bool)!dl.DialogResult)
-                        Environment.Exit(0);
-                }
-                else
-                    Environment.Exit(0);
-            }
-            /*
+                return ValidationStatus.LevelsDataFileCorrupt;
+
             // Check if RayTwol has been used before
             if (!Directory.Exists(raytwolFolder))
-            {
-                var warn = new Warning("Setup", "Press OK to begin the first-time setup procedure. Once complete, RayTwol will open.").ShowDialog();
-                if (warn.Value)
-                    FirstTimeSetup();
-            }
+                return ValidationStatus.RayTwolFolderMissing;
             else
             {
-                long size = Func.DirectorySize(new DirectoryInfo(raytwolFolder));
+                long size = GetDirectorySize(new DirectoryInfo(raytwolFolder));
                 if (!(size == INST_FOLDER_SIZE || size == INST_TEXTURES_FOLDER_SIZE))
-                {
-                    var warn = new Warning("Warning", "First-time setup is not complete or setup-related files have been modified. If this error persists, press OK to re-initialise the setup.").ShowDialog();
-                    if (warn.Value)
-                        FirstTimeSetup();
-                }
+                    return ValidationStatus.FolderSizeIntegrityError;
             }
-            */
+
+            return ValidationStatus.Successful;
         }
 
         public List<FileInfo> ReadGameDirectoryLevelFiles(string levelsDirectory)
@@ -140,6 +112,27 @@ namespace RayTwolCore
                 //TODO: Notify user / Or start setup
                 throw;
             }
+        }
+
+        public long GetDirectorySize(DirectoryInfo dirInfo)
+        {
+            long totalSize = 0;
+
+            // Add file sizes.
+            FileInfo[] files = dirInfo.GetFiles();
+            foreach (FileInfo file in files)
+            {
+                totalSize += file.Length;
+            }
+
+            // Add subdirectory sizes.
+            DirectoryInfo[] directories = dirInfo.GetDirectories();
+            foreach (DirectoryInfo directory in directories)
+            {
+                totalSize += GetDirectorySize(directory);
+            }
+
+            return totalSize;
         }
     }
 }
