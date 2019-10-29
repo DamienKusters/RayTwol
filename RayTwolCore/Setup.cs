@@ -7,20 +7,6 @@ using System.Threading.Tasks;
 
 namespace RayTwolCore
 {
-    public enum ValidationStatus
-    {
-        LevelsFolderMissing,
-
-        LevelsDataFileMissing,
-        LevelsDataFileCorrupt,
-
-        RayTwolFolderMissing,
-
-        FolderSizeIntegrityError,
-
-        Successful
-    }
-
     public class Setup
     {
         public const long INST_FOLDER_SIZE = 38341965;
@@ -35,7 +21,7 @@ namespace RayTwolCore
         public ValidationStatus ValidateGameDirectory(string gameDirectory)
         {
             if (!Directory.Exists(gameDirectory + @"\Data\World\Levels"))
-                return ValidationStatus.LevelsFolderMissing;
+                return new ValidationStatus("Levels folder missing", "No levels folder found.", true);
 
             return ValidateFileIntegrity(gameDirectory);
         }
@@ -47,21 +33,26 @@ namespace RayTwolCore
 
             // Check for LEVELS0.DAT
             if (!File.Exists(levels0File))
-                return ValidationStatus.LevelsDataFileMissing;
+                return new ValidationStatus("LEVELS0.DAT not found",
+                            "This is a retail install of Rayman 2 and requires LEVELS0.DAT, a 150 MB file included in the GOG version. Press OK to download and install the file.", true);
             else if (new FileInfo(levels0File).Length != INST_LEVELS0_SIZE)
-                return ValidationStatus.LevelsDataFileCorrupt;
+                return new ValidationStatus("LEVELS0.DAT corrupted",
+                            "LEVELS0.DAT appears to be corrupted. Press OK to re-download.", true);
 
             // Check if RayTwol has been used before
             if (!Directory.Exists(raytwolFolder))
-                return ValidationStatus.RayTwolFolderMissing;
+                return new ValidationStatus("Setup",
+                            "Press OK to begin the first-time setup procedure. Once complete, RayTwol will open.", true);
             else
             {
                 long size = GetDirectorySize(new DirectoryInfo(raytwolFolder));
                 if (!(size == INST_FOLDER_SIZE || size == INST_TEXTURES_FOLDER_SIZE))
-                    return ValidationStatus.FolderSizeIntegrityError;
+                    return new ValidationStatus("Warning",
+                            "First-time setup is not complete or setup-related files have been modified. If this error persists, press OK to re-initialise the setup.", true);
             }
 
-            return ValidationStatus.Successful;
+            return new ValidationStatus("Setup complete",
+                            "Setup complete", false);
         }
 
         public List<FileInfo> ReadGameDirectoryLevelFiles(string levelsDirectory)
